@@ -255,6 +255,13 @@ require([
 
     document.head.appendChild(style);
   }
+      
+  document.querySelector("body").addEventListener('keydown', function(e) {
+    if (e.keyCode == 82 && e.ctrlKey) {
+      console.log("Oh eh casse pas tout stp");
+      e.preventDefault();
+    }
+  });
 
   // Load ressources and Start the client !
   console.log("Client started");

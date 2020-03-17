@@ -4,9 +4,9 @@ var enums = require("./enums"),
   PlayersManager = require("./playersManager");
 
 // Defines
-var MAX_PLAYERS = 4;
+var MAX_PLAYERS = 1000;
 var SERVER_CHAT_COLOR = "#c0392b";
-var TIME_BEFORE_START = 5;
+var TIME_BEFORE_START = 1;
 
 // Parameters
 var _playersManager, _gridManager, _io, _gameState, _lastWordFoudTimestamp;
@@ -270,8 +270,16 @@ exports.startMflServer = function(desiredGrid) {
       socket.on("disconnect", function() {
         // When a player disconnect, retreive player instance
         socket.get("PlayerInstance", function(error, player) {
-          sendChatMessage(player.getNick() + " a quitté la partie");
           _playersManager.removePlayer(player);
+          sendChatMessage(
+            player.getNick() +
+              " a quitté la partie<br/>" +
+              _playersManager.getNumberOfPlayers() +
+              " joueurs connectés",
+            undefined,
+            undefined,
+            _playersManager.getPlayerList()
+          );
           player = null;
         });
       });

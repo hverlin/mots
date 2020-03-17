@@ -160,7 +160,7 @@ define(function () {
     }
 
     // If backspace / escape / del is pressed
-    if ((key == 8) || (key == 27) || (key == 46)) {
+    if ((key == 8) || (key == 27) || (key == 46) || (key == 32)) {
       removeLetter();
       event.preventDefault();
     }

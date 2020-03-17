@@ -7,6 +7,7 @@ var enums = require("./enums"),
 var MAX_PLAYERS = 1000;
 var SERVER_CHAT_COLOR = "#c0392b";
 var TIME_BEFORE_START = 1;
+var DELAY_BETWEEN_GRID = 2;
 
 // Parameters
 var _playersManager, _gridManager, _io, _gameState, _lastWordFoudTimestamp;
@@ -59,6 +60,8 @@ function resetGame(gridID) {
 
       // Send reset order to clients
       _io.sockets.emit("grid_reset");
+
+      startGame();
     }
   });
 }
@@ -181,6 +184,9 @@ function checkWord(player, wordObj) {
         "game_over",
         _playersManager.getWinner().getPlayerObject()
       );
+      setTimeout(() => {
+        resetGame(_gridManager.getGrid().infos.id - 1);
+      }, DELAY_BETWEEN_GRID * 1000);
     }
   }
 }
@@ -250,6 +256,8 @@ exports.startMflServer = function(desiredGrid) {
       // If an error occurs, exit
       console.error("[ERROR] Cannot retreive grid. Abort server.");
       process.exit(1);
+    } else {
+      startGame();
     }
   });
 

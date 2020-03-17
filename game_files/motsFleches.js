@@ -32,6 +32,9 @@ function startGame() {
 function resetGame(gridID) {
   var infos;
 
+  _foundWords = [];
+  _scoreUpdates = [];
+
   // Reset game state
   _gameState = enums.ServerState.WaitingForPlayers;
 

@@ -79,6 +79,7 @@ require([
 
       // Display login screen and bind start button
       _ui.ChangeGameScreen(enumPanels.Login, true);
+      document.getElementById('lp-nick').focus();
       document.getElementById("lp-start-btn").onclick = sendPlayerReady;
     });
 
@@ -99,7 +100,7 @@ require([
     for (i = 0; i < nbLogos; i++) {
       if (logosNodes.player == null)
         logosNodes +=
-          '<img class="lp-logos-monster" src="' +
+          '<img tabindex="0" class="lp-logos-monster" src="' +
           logoList[i].path +
           '" style="border-color: ' +
           logoList[i].color +
@@ -113,7 +114,7 @@ require([
     logosNodes = document.querySelectorAll(".lp-logos-monster");
     nbLogos = logosNodes.length;
     for (i = 0; i < nbLogos; i++) {
-      logosNodes[i].onclick = function(event) {
+      function selectPicture(event) {
         var oldSelection = document.querySelector(".myMonster");
 
         // Unset last selection if any and set the new monster
@@ -123,6 +124,14 @@ require([
         // Show the color !
         document.getElementById("lp-nick").style.borderColor =
           event.srcElement.style.borderColor;
+      }
+
+      logosNodes[i].onclick = selectPicture;
+      logosNodes[i].onkeydown = (event) => {
+        if(event.keyCode === 13) {
+          selectPicture(event);
+          sendPlayerReady();
+        }
       };
     }
   }
@@ -237,7 +246,7 @@ require([
   function setPlayerColor(color) {
     var color = _ui.getRGBComponents(color),
       css =
-        ".focusCell { -moz-box-shadow: inset 0px 0px 30px 4px rgba(" +
+        ".letter:focus-within { -moz-box-shadow: inset 0px 0px 30px 4px rgba(" +
         color +
         ",0.2);box-shadow: inset 0px 0px 30px 4px rgba(" +
         color +
@@ -255,7 +264,7 @@ require([
 
     document.head.appendChild(style);
   }
-      
+
   document.querySelector("body").addEventListener('keydown', function(e) {
     if (e.keyCode == 82 && e.ctrlKey) {
       console.log("Oh eh casse pas tout stp");

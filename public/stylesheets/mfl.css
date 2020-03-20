@@ -75,7 +75,7 @@ body {
 
 /* General */
 .ui {
-  position: absolute;
+  position: fixed;
   bottom: -100%;
 
   width: 100%;
@@ -85,10 +85,12 @@ body {
 
   -webkit-transition: bottom 600ms ease;
   transition: bottom 600ms ease;
+  visibility: hidden;
 }
 
 .ui-displayed {
   bottom: 0;
+  visibility: visible;
 }
 
 /* Error panel */
@@ -530,7 +532,7 @@ body {
   border: none;
 }
 
-.focusCell {
+.letter:focus-within {
   -webkit-box-shadow: inset 0px 0px 30px 4px rgba(231, 166, 26, 0.4);
   -moz-box-shadow: inset 0px 0px 30px 4px rgba(231, 166, 26, 0.4);
   box-shadow: inset 0px 0px 30px 4px rgba(231, 166, 26, 0.4);

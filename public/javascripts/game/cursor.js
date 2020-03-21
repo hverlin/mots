@@ -198,13 +198,19 @@ define(function () {
     event.stopPropagation();
     var key = event.keyCode;
 
+    // press space to change the cursor direction
+    if (key === 32) {
+      setCursorDirection();
+      return;
+    }
+
     // If a letter is pressed
     if ((key >= 65) && (key <= 90)) {
       insertLetter(String.fromCharCode(key));
     }
 
     // If backspace / escape / del is pressed
-    if ((key == 8) || (key == 27) || (key == 46) || (key == 32)) {
+    if ((key == 8) || (key == 27) || (key == 46)) {
       removeLetter();
       event.preventDefault();
     }

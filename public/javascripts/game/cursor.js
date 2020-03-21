@@ -162,12 +162,14 @@ define(function () {
     }
   }
 
-  function onEnter(event) {
+  function onKeydownMobile(event) {
     if (event.keyCode !== 13) {
       return;
     }
 
+    // if the input is empty, change focus direction on en enter
     if (!event.target.value) {
+      setCursorDirection();
       return;
     }
 
@@ -277,7 +279,7 @@ define(function () {
       if (isMobileOrTablet()) {
         // a mobile keyboard does not send keydown event, update the cell on blur instead
         letterCases[i].firstChild.addEventListener('blur', onblur, false);
-        letterCases[i].firstChild.addEventListener('keydown', onEnter, false);
+        letterCases[i].firstChild.addEventListener('keydown', onKeydownMobile, false);
       } else {
         letterCases[i].addEventListener('keydown', onLetterPressed, false);
       }

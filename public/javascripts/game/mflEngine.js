@@ -8,6 +8,9 @@ require([
   "chat",
   "score"
 ], function(Conf, UITools, GridManager, Chat, Score) {
+  const USERNAME_KEY = 'mots-js-username';
+  const MONSTER_ID = 'mots-js-monster';
+
   var enumState = {
     Login: 0,
     Waiting: 1,
@@ -79,8 +82,12 @@ require([
 
       // Display login screen and bind start button
       _ui.ChangeGameScreen(enumPanels.Login, true);
-      document.getElementById('lp-nick').focus();
-      document.getElementById("lp-start-btn").onclick = sendPlayerReady;
+      document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        sendPlayerReady();
+      });
     });
 
     _socket.on("error", function() {
@@ -89,6 +96,14 @@ require([
       _ui.ChangeGameScreen(enumPanels.Error, true);
       console.log("Cannot connect the web_socket");
     });
+  }
+
+  function selectMonster(element) {
+    element.classList.add("myMonster");
+
+    // Show the color !
+    document.getElementById("lp-nick").style.borderColor =
+      element.style.borderColor;
   }
 
   function prepareUserLoginForm(logoList) {
@@ -115,34 +130,46 @@ require([
     nbLogos = logosNodes.length;
     for (i = 0; i < nbLogos; i++) {
       function selectPicture(event) {
-        var oldSelection = document.querySelector(".myMonster");
+        const oldSelection = document.querySelector(".myMonster");
 
         // Unset last selection if any and set the new monster
-        if (oldSelection) oldSelection.classList.remove("myMonster");
-        event.srcElement.classList.add("myMonster");
+        if (oldSelection) {
+          oldSelection.classList.remove("myMonster");
+        }
 
-        // Show the color !
-        document.getElementById("lp-nick").style.borderColor =
-          event.srcElement.style.borderColor;
+        selectMonster(event.srcElement);
       }
 
       logosNodes[i].onclick = selectPicture;
       logosNodes[i].onkeydown = (event) => {
         if(event.keyCode === 13) {
           selectPicture(event);
-          sendPlayerReady();
+          if (document.getElementById('lp-nick').value) {
+            sendPlayerReady();
+          }
         }
       };
     }
+
+    const loginInput = document.getElementById('lp-nick');
+    const username = localStorage.getItem(USERNAME_KEY);
+    if (username) {
+      loginInput.value = username;
+    }
+
+    const monsterId = localStorage.getItem(MONSTER_ID);
+    if (monsterId) {
+      selectMonster(document.querySelector('[data-monster-id="' + monsterId + '"]'))
+    }
+
+    loginInput.focus();
   }
 
   function sendPlayerReady() {
-    var nick = document.getElementById("lp-nick").value,
-      monsterNode = document.querySelector(".myMonster"),
-      monster;
+    const username = document.getElementById("lp-nick").value;
+    const monsterNode = document.querySelector(".myMonster");
 
-    // If nick is empty or if it has the default value,
-    if (nick == "" || monsterNode == null) {
+    if (!username || monsterNode == null) {
       _ui.InfoTooltip(
         true,
         "Vous devez choisir un <strong>pseudo</strong> et un <strong> petit monstre</strong> !",
@@ -151,7 +178,10 @@ require([
       return false;
     }
 
-    monster = parseInt(monsterNode.getAttribute("data-monster-id"), 10);
+    const monster = parseInt(monsterNode.getAttribute("data-monster-id"), 10);
+
+    localStorage.setItem(USERNAME_KEY, username);
+    localStorage.setItem(MONSTER_ID, ''+monster);
 
     // Unbind button event to prevent "space click"
     document.getElementById("lp-start-btn").onclick = function() {
@@ -186,7 +216,7 @@ require([
     setPlayerColor(monsterNode.style.borderColor);
 
     // Send player infos to the server
-    _socket.emit("userIsReady", { nick: nick, monster: monster });
+    _socket.emit("userIsReady", { nick: username, monster: monster });
 
     return false;
   }
@@ -194,7 +224,7 @@ require([
   function onStartGame(gridEvent) {
     var startTimer;
 
-    // Instanciate grid manager and provide the validation callback
+    // Instantiate grid manager and provide the validation callback
     _gridManager = new GridManager(gridEvent.grid, function(wordObj) {
       _socket.emit("wordValidation", wordObj);
     });

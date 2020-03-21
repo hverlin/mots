@@ -24,11 +24,12 @@ html
         .lp-case.lp-title .
         .lp-case.lp-title J
         .lp-case.lp-title S
+
       section#lp-infos
-        // <label>Votre pseudo ></label>
-        input#lp-nick(type='text', value='', placeholder='Votre pseudo')
-        #lp-logos
-        input#lp-start-btn(type='button', value='Jouer !')
+        form#login-form
+          input#lp-nick(type='text', value='', placeholder='Votre pseudo')
+          #lp-logos
+          input#lp-start-btn(type='submit', value='Jouer !')
 
       // Game screen
       #game-panel.ui

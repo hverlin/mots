@@ -96,7 +96,9 @@ define(['cursor'], function (Cursor) {
   }
 
   function insertLetter(line, column, size, info, index) {
-    var frame = document.createElement('div');
+    var frame = document.createElement('input');
+
+    frame.setAttribute('maxlength', '1');
 
     // Set class
     frame.className = 'frame letter frame' + info.pos;
@@ -254,7 +256,7 @@ define(['cursor'], function (Cursor) {
         node = document.querySelector('.frame' + index);
         node.style.cssText += '-webkit-transition-delay: ' + animationDelay + 'ms; transition-delay: ' + animationDelay + 'ms; color: ' + wordObj.color;
         node.classList.add('reveal' + wordObj.axis);
-        node.innerHTML = _grid.cases[index].letter;
+        node.value = _grid.cases[index].letter;
         
         animationDelay += REVEAL_WORD_ANIM_DELAY;
       }

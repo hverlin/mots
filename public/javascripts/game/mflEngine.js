@@ -244,17 +244,18 @@ require([
   }
 
   function setPlayerColor(color) {
-    var color = _ui.getRGBComponents(color),
-      css =
-        ".letter:focus-within { -moz-box-shadow: inset 0px 0px 30px 4px rgba(" +
-        color +
-        ",0.2);box-shadow: inset 0px 0px 30px 4px rgba(" +
-        color +
-        ",0.2);border-color: rgba(" +
-        color +
-        ",0.4); } .goRight:before, .goDown:before { color: rgb(" +
-        color +
-        "); }",
+    color = _ui.getRGBComponents(color);
+    const css = `
+        .letter:focus-within { 
+            -moz-box-shadow: inset 0 0 30px 4px rgba(${color},0.2);
+            box-shadow: inset 0 0 30px 4px rgba(${color},0.2);
+            border-color: rgba(${color},0.4); 
+         } 
+         
+         .goRight:before,
+         .goDown:before {
+            color: rgb(${color});
+         }`,
       style = document.createElement("style");
 
     style.type = "text/css";

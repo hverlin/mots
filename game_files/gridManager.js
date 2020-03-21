@@ -312,7 +312,7 @@ GridManager.prototype.checkPlayerWord = function(wordObj) {
     index += jump;
   }
 
-  // It's the righ word, so set letters as already founded
+  // It's the right word, so set letters as already founded
   index = wordObj.start;
   for (i = 0; i < wordSize; i++) {
     if (_grid.cases[index].available == true)

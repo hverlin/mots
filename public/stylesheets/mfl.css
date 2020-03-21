@@ -539,6 +539,18 @@ body {
 
   border-color: rgba(231, 166, 26, 0.4);
 }
+
+.frame input {
+  width: 100%;
+  background: transparent;
+  height: 100%;
+  border: none;
+  font-size: 40px;
+  line-height: 67px;
+  outline: none;
+  text-align: center;
+}
+
 .goRight:before {
   position: absolute;
   right: -0.2em;
@@ -549,6 +561,7 @@ body {
 
   opacity: 0.4;
 }
+
 .goDown:before {
   position: absolute;
   bottom: -0.8em;

@@ -96,15 +96,19 @@ define(['cursor'], function (Cursor) {
   }
 
   function insertLetter(line, column, size, info, index) {
-    var frame = document.createElement('input');
+    var frame = document.createElement('div');
+    var input = document.createElement('input');
+    frame.appendChild(input);
 
-    frame.setAttribute('maxlength', '1');
+    input.setAttribute('maxlength', '1');
 
     // Set class
     frame.className = 'frame letter frame' + info.pos;
+
     // Set size
     frame.style.width = size + 'px';
     frame.style.height = size + 'px';
+
     // Set position
     frame.style.top = (line * size) + 'px';
     frame.style.left = (column * size) + 'px';
@@ -115,14 +119,14 @@ define(['cursor'], function (Cursor) {
     frame.setAttribute('data-line', line);
     frame.setAttribute('data-col', column);
     frame.setAttribute('data-pos', info.pos);
-    frame.tabIndex = index;
+    input.tabIndex = index;
 
     if (info.dashed)
       frame.classList.add('dash' + info.dashed);
 
     // Adding extra parameter
-    info.available = true;
-    info.letter = null;
+    frame.available = true;
+    frame.letter = null;
 
     return (frame);
   }
@@ -247,22 +251,25 @@ define(['cursor'], function (Cursor) {
 
     for (i = 0; i < size; i++) {
       // If this letter is a just found
-      if (_grid.cases[index].available == true) {
+      if (_grid.cases[index]) {
         // Update grid object
         _grid.cases[index].letter = wordObj.word[i];
         _grid.cases[index].available = false;
 
         // Display it
-        node = document.querySelector('.frame' + index);
-        node.style.cssText += '-webkit-transition-delay: ' + animationDelay + 'ms; transition-delay: ' + animationDelay + 'ms; color: ' + wordObj.color;
-        node.classList.add('reveal' + wordObj.axis);
-        node.value = _grid.cases[index].letter;
+        let frame = document.querySelector('.frame' + index);
+        let input = frame.firstChild;
+        input.style.cssText += '-webkit-transition-delay: ' + animationDelay + 'ms; transition-delay: ' + animationDelay + 'ms; color: ' + wordObj.color;
+        frame.style.cssText += '-webkit-transition-delay: ' + animationDelay + 'ms; transition-delay: ' + animationDelay + 'ms; color: ' + wordObj.color;
+        input.classList.add('reveal' + wordObj.axis);
+        frame.classList.add('reveal' + wordObj.axis);
+        input.value = _grid.cases[index].letter;
         
         animationDelay += REVEAL_WORD_ANIM_DELAY;
       }
 
       index += jump;
-    };
+    }
   };
 
 

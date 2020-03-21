@@ -31,6 +31,12 @@ define(function () {
       // Now put the info panel on the grid
       document.getElementById('gs-grid-container').innerHTML += '<div id="ig-infos" style="left: ' + square.x + 'px; top: ' + square.y + 'px; width: ' + square.width + 'px; height: ' + square.height + 'px;"><header></header><time></time><footer></footer></div>';
     }
+
+    document.getElementById('ig-infos').addEventListener('click', () => {
+      // reset grid position when clicking on the center of the grid
+      // as it is not possible to detect if the user has hidden the virtual keyboard
+      document.getElementById('game-panel').style.bottom = '0';
+    })
   }
 
   function formatTime(ellapsedTime) {

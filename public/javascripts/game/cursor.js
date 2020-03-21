@@ -10,6 +10,8 @@ define(function () {
     return check;
   }
 
+  var _preventBlurLock;
+
   var enumDirections = {
     Left: 37,
     Up: 38,
@@ -117,7 +119,9 @@ define(function () {
 
       // Focus new frame
       _focusCell = document.querySelector('.frame' + index);
-      _focusCell.focus();
+      _preventBlurLock = true;
+      _focusCell.firstChild.focus();
+      _preventBlurLock = false;
       if (direction == enumDirections.Left || direction == enumDirections.Right) {
         _focusDirection = enumDirections.Right;
         _focusCell.classList.add('goRight');
@@ -147,24 +151,43 @@ define(function () {
     }
 
     // Remember the cell, focus it and set default direction
-    _focusCell = event.target;
-    _focusCell.focus();
+    _focusCell = event.target.parentElement;
+    event.target.focus();
     _focusCell.classList.add('goRight');
     _focusDirection = enumDirections.Right;
 
+    // move the grid otherwise it would be hidden by the virtual keyboard
     if (isMobileOrTablet() && +_focusCell.dataset.line > 7) {
-      document.getElementById('game-panel').style.marginBottom = '400px';
+      document.getElementById('game-panel').style.bottom = '400px';
     }
-
   }
 
-  function onblur() {
-    document.getElementById('game-panel').style.marginBottom = '0';
-    if (!_focusCell.value) {
+  function onEnter(event) {
+    if (event.keyCode !== 13) {
       return;
     }
 
-    insertLetter(_focusCell.value);
+    if (!event.target.value) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    insertLetter(event.target.value);
+  }
+
+  function onblur() {
+    if(_preventBlurLock) {
+      return;
+    }
+
+    document.getElementById('game-panel').style.bottom = '0';
+    if (!this.value) {
+      return;
+    }
+
+    insertLetter(this.value);
   }
 
   /*
@@ -202,23 +225,21 @@ define(function () {
 
     // Print letter on grid if we can
     if ((_focusCell != null) && (_grid[pos].available == true)) {
-      _focusCell.value = character;
+      _focusCell.firstChild.value = character;
     
       // Notify grid that a new letter is inserted
       _letterUpdateCallback(pos, character);
     }
 
     // Go to the next frame
-    if (!isMobileOrTablet()) {
-      moveCursor(_focusDirection)
-    }
+    moveCursor(_focusDirection)
   }
 
   function removeLetter() {
     var pos = parseInt(_focusCell.getAttribute('data-pos'));
 
     if (_grid[pos].available == true) {
-      _focusCell.value = '';
+      _focusCell.firstChild.value = '';
       
       // Notify grid that the letter has been removed
       _letterUpdateCallback(parseInt(_focusCell.getAttribute('data-pos')), null);
@@ -249,7 +270,8 @@ define(function () {
 
       if (isMobileOrTablet()) {
         // a mobile keyboard does not send keydown event, update the cell on blur instead
-        letterCases[i].addEventListener('blur', onblur, false);
+        letterCases[i].firstChild.addEventListener('blur', onblur, false);
+        letterCases[i].firstChild.addEventListener('keydown', onEnter, false);
       } else {
         letterCases[i].addEventListener('keydown', onLetterPressed, false);
       }
